@@ -1,0 +1,14 @@
+{
+  "name": "db-writer-service",
+  "version": "1.0.0",
+  "description": "Database Writer Service for Lead Processing System",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.3",
+    "dotenv": "^16.5.0",
+    "mongodb": "^5.8.0"
+  }
+}

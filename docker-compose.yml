@@ -1,0 +1,127 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - lead-network
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: ./api-gateway/Dockerfile
+    container_name: api-gateway
+    ports:
+      - "3000:3000"
+    environment:
+      - RABBITMQ_URL=${RABBITMQ_URL}
+      - MONGODB_URI=${MONGODB_URI}
+      - PORT=3000
+    depends_on:
+      - rabbitmq
+    networks:
+      - lead-network
+    volumes:
+      - ./api-gateway:/app
+      - ./shared:/app/shared
+      - /app/node_modules
+
+  validator-service:
+    build:
+      context: .
+      dockerfile: ./validator-service/Dockerfile
+    container_name: validator-service
+    environment:
+      - RABBITMQ_URL=${RABBITMQ_URL}
+    depends_on:
+      - rabbitmq
+    networks:
+      - lead-network
+    volumes:
+      - ./validator-service:/app
+      - ./shared:/app/shared
+      - /app/node_modules
+  
+  cleaner-service:
+    build:
+      context: .
+      dockerfile: ./cleaner-service/Dockerfile
+    container_name: cleaner-service
+    environment:
+      - RABBITMQ_URL=${RABBITMQ_URL}
+    depends_on:
+      - rabbitmq
+    networks:
+      - lead-network
+    volumes:
+      - ./cleaner-service:/app
+      - ./shared:/app/shared
+      - /app/node_modules
+
+  enricher-service:
+    build:
+      context: .
+      dockerfile: ./enricher-service/Dockerfile
+    container_name: enricher-service
+    environment:
+      - RABBITMQ_URL=${RABBITMQ_URL}
+    depends_on:
+      - rabbitmq
+    networks:
+      - lead-network
+    volumes:
+      - ./enricher-service:/app
+      - ./shared:/app/shared
+      - /app/node_modules
+
+  db-writer-service:
+    build:
+      context: .
+      dockerfile: ./db-writer-service/Dockerfile
+    container_name: db-writer-service
+    environment:
+      - RABBITMQ_URL=${RABBITMQ_URL}
+      - MONGODB_URI=${MONGODB_URI}
+    depends_on:
+      - rabbitmq
+    networks:
+      - lead-network
+    volumes:
+      - ./db-writer-service:/app
+      - ./shared:/app/shared
+      - /app/node_modules
+
+  frontend:
+    build:
+      context: .
+      dockerfile: ./frontend/Dockerfile
+    container_name: frontend
+    ports:
+      - "3001:3001"
+    environment:
+      - REACT_APP_API_URL=http://localhost:3000
+      - PORT=3001
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - api-gateway
+    networks:
+      - lead-network
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+networks:
+  lead-network:
+    driver: bridge
+
+volumes:
+  rabbitmq_data:

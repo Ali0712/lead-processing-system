@@ -1,0 +1,14 @@
+{
+  "name": "validator-service",
+  "version": "1.0.0",
+  "description": "Validator Service for Lead Processing System",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.3",
+    "dotenv": "^16.5.0",
+    "email-validator": "^2.0.4"
+  }
+}
