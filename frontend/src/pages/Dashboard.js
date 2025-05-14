@@ -3,8 +3,10 @@ import { Row, Col, Card, Statistic, Spin, Alert, Divider } from "antd"
 import { UserOutlined, CheckCircleOutlined, ClockCircleOutlined, LineChartOutlined } from "@ant-design/icons"
 import { Line, Pie, Column } from "@ant-design/plots"
 import { leadsApi } from "../api"
+import useResponsive from "../hooks/useResponsive"
 
 const Dashboard = () => {
+  const { isMobile } = useResponsive()
   const {
     data: stats,
     isLoading,
@@ -64,7 +66,6 @@ const Dashboard = () => {
   }
 
   const data = stats || mockStats
-  // const data = mockStats
 
   const lineConfig = {
     data: data.leadsByDay,
@@ -79,21 +80,35 @@ const Dashboard = () => {
         fill: "#aaa",
       },
     },
+    // Mobile optimizations
+    padding: isMobile ? "auto" : [30, 30, 50, 50],
+    autoFit: true,
+    tooltip: {
+      showMarkers: false,
+    },
+    interactions: [{ type: "element-active" }],
   }
 
   const pieConfig = {
     data: data.leadsBySource,
     angleField: "value",
     colorField: "type",
-    radius: 0.8,
+    radius: isMobile ? 0.7 : 0.8,
     label: {
       type: "outer",
-      content: "{name} {percentage}",
+      content: isMobile ? "{name}" : "{name} {percentage}",
+      style: {
+        fontSize: isMobile ? 10 : 12,
+      },
+    },
+    legend: {
+      position: isMobile ? "bottom" : "right",
+      itemHeight: isMobile ? 16 : 20,
+    },
+    tooltip: {
+      showTitle: false,
     },
     interactions: [
-      {
-        type: "pie-legend-active",
-      },
       {
         type: "element-active",
       },
@@ -106,12 +121,16 @@ const Dashboard = () => {
     yField: "count",
     color: "#1890ff",
     label: {
-      position: "middle",
+      position: isMobile ? "top" : "middle",
       style: {
-        fill: "#FFFFFF",
-        opacity: 0.6,
+        fill: isMobile ? "#000000" : "#FFFFFF",
+        opacity: isMobile ? 1 : 0.6,
+        fontSize: isMobile ? 10 : 12,
       },
     },
+    // Mobile optimizations
+    padding: isMobile ? "auto" : [30, 30, 50, 50],
+    autoFit: true,
     meta: {
       score: {
         alias: "Score Range",
@@ -124,15 +143,15 @@ const Dashboard = () => {
 
   return (
     <div>
-      <h1>Dashboard</h1>
-      <Row gutter={[16, 16]}>
-        <Col xs={24} sm={12} md={6}>
-          <Card className="stats-card">
+      <h1 style={{ fontSize: isMobile ? "20px" : "24px" }}>Dashboard</h1>
+      <Row gutter={[isMobile ? 8 : 16, isMobile ? 8 : 16]}>
+        <Col xs={12} sm={12} md={6}>
+          <Card className="stats-card" bodyStyle={{ padding: isMobile ? "12px 8px" : "24px" }}>
             <Statistic title="Total Leads" value={data.totalLeads} prefix={<UserOutlined />} />
           </Card>
         </Col>
-        <Col xs={24} sm={12} md={6}>
-          <Card className="stats-card">
+        <Col xs={12} sm={12} md={6}>
+          <Card className="stats-card" bodyStyle={{ padding: isMobile ? "12px 8px" : "24px" }}>
             <Statistic
               title="Processed Leads"
               value={data.processedLeads}
@@ -141,8 +160,8 @@ const Dashboard = () => {
             />
           </Card>
         </Col>
-        <Col xs={24} sm={12} md={6}>
-          <Card className="stats-card">
+        <Col xs={12} sm={12} md={6}>
+          <Card className="stats-card" bodyStyle={{ padding: isMobile ? "12px 8px" : "24px" }}>
             <Statistic
               title="Pending Leads"
               value={data.pendingLeads}
@@ -151,38 +170,48 @@ const Dashboard = () => {
             />
           </Card>
         </Col>
-        <Col xs={24} sm={12} md={6}>
-          <Card className="stats-card">
+        <Col xs={12} sm={12} md={6}>
+          <Card className="stats-card" bodyStyle={{ padding: isMobile ? "12px 8px" : "24px" }}>
             <Statistic title="Average Score" value={data.averageScore} prefix={<LineChartOutlined />} suffix="/ 100" />
           </Card>
         </Col>
       </Row>
 
-      <Divider orientation="left">Lead Trends</Divider>
+      <Divider
+        orientation="left"
+        style={{ fontSize: isMobile ? "14px" : "16px", margin: isMobile ? "16px 0" : "24px 0" }}
+      >
+        Lead Trends
+      </Divider>
 
-      <Row gutter={[16, 16]}>
+      <Row gutter={[isMobile ? 8 : 16, isMobile ? 8 : 16]}>
         <Col xs={24} lg={12}>
-          <Card title="Leads by Day" className="dashboard-card">
-            <div className="chart-container">
+          <Card title="Leads by Day" className="dashboard-card" bodyStyle={{ padding: isMobile ? 8 : 24 }}>
+            <div className="chart-container" style={{ height: isMobile ? "200px" : "300px" }}>
               <Line {...lineConfig} />
             </div>
           </Card>
         </Col>
         <Col xs={24} lg={12}>
-          <Card title="Leads by Source" className="dashboard-card">
-            <div className="chart-container">
+          <Card title="Leads by Source" className="dashboard-card" bodyStyle={{ padding: isMobile ? 8 : 24 }}>
+            <div className="chart-container" style={{ height: isMobile ? "200px" : "300px" }}>
               <Pie {...pieConfig} />
             </div>
           </Card>
         </Col>
       </Row>
 
-      <Divider orientation="left">Lead Score Distribution</Divider>
+      <Divider
+        orientation="left"
+        style={{ fontSize: isMobile ? "14px" : "16px", margin: isMobile ? "16px 0" : "24px 0" }}
+      >
+        Lead Score Distribution
+      </Divider>
 
-      <Row gutter={[16, 16]}>
+      <Row gutter={[isMobile ? 8 : 16, isMobile ? 8 : 16]}>
         <Col xs={24}>
-          <Card title="Lead Score Distribution" className="dashboard-card">
-            <div className="chart-container">
+          <Card title="Lead Score Distribution" className="dashboard-card" bodyStyle={{ padding: isMobile ? 8 : 24 }}>
+            <div className="chart-container" style={{ height: isMobile ? "200px" : "300px" }}>
               <Column {...scoreConfig} />
             </div>
           </Card>

@@ -1,3 +1,4 @@
+"use client"
 import { useParams, useNavigate } from "react-router-dom"
 import { useQuery } from "react-query"
 import { Card, Descriptions, Tag, Button, Spin, Alert, Divider, Row, Col, Timeline } from "antd"
@@ -11,10 +12,12 @@ import {
 } from "@ant-design/icons"
 import dayjs from "dayjs"
 import { leadsApi } from "../api"
+import useResponsive from "../hooks/useResponsive"
 
 const LeadDetail = () => {
   const { id } = useParams()
   const navigate = useNavigate()
+  const { isMobile } = useResponsive()
 
   const { data: lead, isLoading, error } = useQuery(["lead", id], () => leadsApi.getLead(id))
 
@@ -24,6 +27,7 @@ const LeadDetail = () => {
     name: "John Doe",
     email: "john.doe@example.com",
     phone: "+1 (555) 123-4567",
+    company: "Acme Inc",
     website: "https://www.acme.com",
     source: "Website",
     score: 85,
@@ -38,7 +42,7 @@ const LeadDetail = () => {
       latitude: 37.7749,
       longitude: -122.4194,
     },
-    company: {
+    companyInfo: {
       name: "Acme Inc",
       industry: "Technology",
       size: "51-200 employees",
@@ -48,7 +52,6 @@ const LeadDetail = () => {
   }
 
   const leadData = lead || mockLead
-  console.log(leadData)
 
   if (isLoading) {
     return (
@@ -59,24 +62,18 @@ const LeadDetail = () => {
     )
   }
 
+  if (error) {
+    return (
+      <Alert message="Error" description="Failed to load lead details. Please try again later." type="error" showIcon />
+    )
+  }
+
   const getScoreColor = (score) => {
     if (score >= 80) return "green"
     if (score >= 60) return "blue"
     if (score >= 40) return "orange"
     return "red"
   }
-
-  if (error) {
-    return (
-      <Alert
-        message="Error"
-        description="Failed to load lead data. Please try again later."
-        type="error"
-        showIcon
-      />
-    )
-  }
-
 
   return (
     <div>
@@ -89,13 +86,18 @@ const LeadDetail = () => {
         Back to Leads
       </Button>
 
-      <h1>Lead Details</h1>
+      <h1 style={{ fontSize: isMobile ? "20px" : "24px" }}>Lead Details</h1>
 
-      {/* First Row: Basic Info and Timeline */}
-      <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
-        <Col xs={24} md={16}>
+      <Row gutter={[isMobile ? 8 : 16, isMobile ? 8 : 16]}>
+        <Col xs={24} lg={16}>
           <Card title="Basic Information">
-            <Descriptions bordered column={{ xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }}>
+            <Descriptions
+              bordered
+              column={{ xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }}
+              size={isMobile ? "small" : "default"}
+              labelStyle={isMobile ? { padding: "8px" } : {}}
+              contentStyle={isMobile ? { padding: "8px" } : {}}
+            >
               <Descriptions.Item label="Name">
                 <UserOutlined style={{ marginRight: 8 }} />
                 {leadData.name}
@@ -111,12 +113,14 @@ const LeadDetail = () => {
                 {leadData.phone || "N/A"}
               </Descriptions.Item>
 
+              <Descriptions.Item label="Company">{leadData.company || "N/A"}</Descriptions.Item>
+
               <Descriptions.Item label="Website">
                 {leadData.website ? (
                   <>
                     <GlobalOutlined style={{ marginRight: 8 }} />
                     <a href={leadData.website} target="_blank" rel="noopener noreferrer">
-                      {leadData.website}
+                      {isMobile ? "Website Link" : leadData.website}
                     </a>
                   </>
                 ) : (
@@ -135,19 +139,22 @@ const LeadDetail = () => {
               </Descriptions.Item>
             </Descriptions>
 
-
-            <Divider orientation="left">Notes</Divider>
-            {/* <p>{leadData.notes}</p> */}
-            {leadData.notes ? (
-              <p>{leadData.notes}</p>
-            ) : (
-              <p style={{ color: "gray" }}>No additional notes provided.</p>
+            {leadData.notes && (
+              <>
+                <Divider
+                  orientation="left"
+                  style={{ fontSize: isMobile ? "14px" : "16px", margin: isMobile ? "16px 0" : "24px 0" }}
+                >
+                  Notes
+                </Divider>
+                <p>{leadData.notes}</p>
+              </>
             )}
           </Card>
         </Col>
 
-        <Col xs={24} md={8}>
-          <Card title="Processing Timeline">
+        <Col xs={24} lg={8}>
+          <Card title="Processing Timeline" style={{ marginBottom: 16 }}>
             <Timeline
               items={[
                 {
@@ -186,49 +193,30 @@ const LeadDetail = () => {
               ]}
             />
           </Card>
-        </Col>
-      </Row>
 
-      {/* Second Row: Company Info and Geolocation */}
-      <Row gutter={[16, 16]}>
-        {leadData.company && (
-          <Col xs={24} md={12}>
-            <Card title="Company Information">
-              <Descriptions column={1} size="small">
-                <Descriptions.Item label="Name">{leadData.company.name}</Descriptions.Item>
-                <Descriptions.Item label="Industry">{leadData.company.industry}</Descriptions.Item>
-                <Descriptions.Item label="Size">{leadData.company.size}</Descriptions.Item>
-                <Descriptions.Item label="Founded">{leadData.company.founded}</Descriptions.Item>
-                {leadData.company.website && (
-                  <Descriptions.Item label="Website">
-                    <GlobalOutlined style={{ marginRight: 8 }} />
-                    <a href={leadData.company.website} target="_blank" rel="noopener noreferrer">
-                      {leadData.company.website}
-                    </a>
-                  </Descriptions.Item>
-                )}
-              </Descriptions>
-            </Card>
-          </Col>
-        )}
-
-        {leadData.geolocation && (
-          <Col xs={24} md={12}>
-            <Card title="Geolocation">
-              <Descriptions column={1} size="small">
+          {leadData.geolocation && (
+            <Card title="Geolocation" style={{ marginBottom: 16 }}>
+              <Descriptions column={1} size={isMobile ? "small" : "default"}>
                 <Descriptions.Item label="Country">
                   <EnvironmentOutlined style={{ marginRight: 8 }} />
                   {leadData.geolocation.country}
                 </Descriptions.Item>
                 <Descriptions.Item label="Region">{leadData.geolocation.region}</Descriptions.Item>
                 <Descriptions.Item label="City">{leadData.geolocation.city}</Descriptions.Item>
-                <Descriptions.Item label="Coordinates">
-                  {leadData.geolocation.latitude}, {leadData.geolocation.longitude}
-                </Descriptions.Item>
               </Descriptions>
             </Card>
-          </Col>
-        )}
+          )}
+
+          {leadData.companyInfo && (
+            <Card title="Company Information">
+              <Descriptions column={1} size={isMobile ? "small" : "default"}>
+                <Descriptions.Item label="Industry">{leadData.companyInfo.industry}</Descriptions.Item>
+                <Descriptions.Item label="Size">{leadData.companyInfo.size}</Descriptions.Item>
+                <Descriptions.Item label="Founded">{leadData.companyInfo.founded}</Descriptions.Item>
+              </Descriptions>
+            </Card>
+          )}
+        </Col>
       </Row>
     </div>
   )

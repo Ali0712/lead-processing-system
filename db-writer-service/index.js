@@ -1,6 +1,6 @@
 require("dotenv").config({ path: "../.env" })
 const { MongoClient } = require("mongodb")
-const { connectToRabbitMQ, consumeQueue } = require("../shared/rabbitmq")
+const { connectToRabbitMQ, consumeQueue } = require("./shared")
 
 const rabbitmqUrl = process.env.RABBITMQ_URL || "amqp://localhost:5672"
 const mongodbUri =

@@ -1,6 +1,6 @@
 require("dotenv").config({ path: "../.env" })
 const validator = require("email-validator")
-const { connectToRabbitMQ, consumeQueue } = require("../shared/rabbitmq")
+const { connectToRabbitMQ, consumeQueue } = require("./shared")
 
 const rabbitmqUrl = process.env.RABBITMQ_URL || "amqp://localhost:5672"
 
@@ -61,4 +61,4 @@ async function start() {
 start()
 
 // Handle graceful shutdown
-process.on("SIGINT", process.exit(0))
+process.on("SIGINT", process.exit)

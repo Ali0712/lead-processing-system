@@ -1,6 +1,6 @@
 const axios = require("axios")
 const NodeCache = require("node-cache")
-const { connectToRabbitMQ, consumeQueue } = require("../shared/rabbitmq")
+// const { connectToRabbitMQ, consumeQueue } = require("./shared")
 
 const rabbitmqUrl = process.env.RABBITMQ_URL || "amqp://localhost:5672"
 

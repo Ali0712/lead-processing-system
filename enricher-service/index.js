@@ -1,7 +1,7 @@
 require("dotenv").config({ path: "../.env" })
 const axios = require("axios")
 const NodeCache = require("node-cache")
-const { connectToRabbitMQ, consumeQueue } = require("../shared/rabbitmq")
+const { connectToRabbitMQ, consumeQueue } = require("./shared")
 
 const rabbitmqUrl = process.env.RABBITMQ_URL || "amqp://localhost:5672"
 const cache = new NodeCache({ stdTTL: 3600 }) // 1 hour TTL
@@ -134,4 +134,4 @@ async function start() {
 
 start()
 
-process.on("SIGINT", process.exit(0))
+process.on("SIGINT", process.exit)

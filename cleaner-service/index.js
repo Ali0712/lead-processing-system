@@ -1,6 +1,6 @@
 require("dotenv").config({path: "../.env"})
 const { parsePhoneNumberFromString } = require("libphonenumber-js")
-const { connectToRabbitMQ, consumeQueue } = require("../shared/rabbitmq")
+const { connectToRabbitMQ, consumeQueue } = require("./shared")
 
 const rabbitmqUrl = process.env.RABBITMQ_URL || "amqp://admin:admin@rabbitmq:5672"
 
@@ -65,9 +65,10 @@ async function processCleaningMessage(leadData, channel) {
 // Start the service
 async function start() {
   const { channel } = await connectToRabbitMQ(rabbitmqUrl, ["lead.cleaning", "lead.enrichment"])
+  console.log("ceone")
 
   // wait for 10 seconds before consuming the queue
-  await new Promise((resolve) => setTimeout(resolve, 10000))
+  // await new Promise((resolve) => setTimeout(resolve, 10000))
 
   if (channel) {
     await consumeQueue(channel, "lead.cleaning", processCleaningMessage)
@@ -77,4 +78,4 @@ async function start() {
 start()
 
 // Handle graceful shutdown
-process.on("SIGINT", process.exit(0))
+process.on("SIGINT", process.exit)

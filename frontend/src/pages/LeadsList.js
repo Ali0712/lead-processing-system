@@ -1,15 +1,20 @@
+"use client"
+
 import { useState } from "react"
 import { useQuery } from "react-query"
 import { Link } from "react-router-dom"
-import { Table, Input, Button, Space, Tag, Card, Select, DatePicker, Row, Col } from "antd"
+import { Input, Button, Space, Tag, Card, Select, DatePicker, Row, Col } from "antd"
 import { SearchOutlined, SyncOutlined } from "@ant-design/icons"
 import dayjs from "dayjs"
 import { leadsApi } from "../api"
+import useResponsive from "../hooks/useResponsive"
+import ResponsiveTable from "../components/ResponsiveTable"
 
 const { Option } = Select
 const { RangePicker } = DatePicker
 
 const LeadsList = () => {
+  const { isMobile } = useResponsive()
   const [filters, setFilters] = useState({
     search: "",
     dateRange: null,
@@ -114,12 +119,14 @@ const LeadsList = () => {
       title: "Email",
       dataIndex: "email",
       key: "email",
+      responsive: ["md"],
     },
     {
       title: "Company",
       dataIndex: "company",
       key: "company",
       render: (text) => text || "-",
+      responsive: ["lg"],
     },
     {
       title: "Score",
@@ -139,6 +146,7 @@ const LeadsList = () => {
         { text: "Email", value: "Email" },
       ],
       onFilter: (value, record) => record.source === value,
+      responsive: ["md"],
     },
     {
       title: "Created At",
@@ -147,6 +155,7 @@ const LeadsList = () => {
       render: (date) => dayjs(date).format("YYYY-MM-DD HH:mm"),
       sorter: (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
       defaultSortOrder: "descend",
+      responsive: ["lg"],
     },
     {
       title: "Actions",
@@ -163,16 +172,17 @@ const LeadsList = () => {
 
   return (
     <div>
-      <h1>Leads List</h1>
+      <h1 style={{ fontSize: isMobile ? "20px" : "24px" }}>Leads List</h1>
 
-      <Card style={{ marginBottom: 16 }}>
-        <Row gutter={[16, 16]} align="middle">
+      <Card style={{ marginBottom: 16 }} bodyStyle={{ padding: isMobile ? 12 : 24 }}>
+        <Row gutter={[isMobile ? 8 : 16, isMobile ? 8 : 16]} align="middle">
           <Col xs={24} md={8}>
             <Input.Search
               placeholder="Search by name, email, or company"
               allowClear
               enterButton={<SearchOutlined />}
               onSearch={handleSearch}
+              size={isMobile ? "middle" : "large"}
             />
           </Col>
           <Col xs={24} md={8}>
@@ -180,30 +190,43 @@ const LeadsList = () => {
               style={{ width: "100%" }}
               onChange={handleDateRangeChange}
               placeholder={["Start Date", "End Date"]}
+              size={isMobile ? "middle" : "large"}
             />
           </Col>
           <Col xs={24} md={6}>
-            <Select style={{ width: "100%" }} placeholder="Score Range" allowClear onChange={handleScoreRangeChange}>
+            <Select
+              style={{ width: "100%" }}
+              placeholder="Score Range"
+              allowClear
+              onChange={handleScoreRangeChange}
+              size={isMobile ? "middle" : "large"}
+            >
               <Option value="0-40">Low (0-40)</Option>
               <Option value="41-70">Medium (41-70)</Option>
               <Option value="71-100">High (71-100)</Option>
             </Select>
           </Col>
-          <Col xs={24} md={2} style={{ textAlign: "right" }}>
-            <Button icon={<SyncOutlined />} onClick={() => refetch()} loading={isLoading} />
+          <Col xs={24} md={2} style={{ textAlign: isMobile ? "left" : "right" }}>
+            <Button
+              icon={<SyncOutlined />}
+              onClick={() => refetch()}
+              loading={isLoading}
+              size={isMobile ? "middle" : "large"}
+            />
           </Col>
         </Row>
       </Card>
 
-      <Table
+      <ResponsiveTable
         dataSource={leads}
         columns={columns}
         rowKey="_id"
         loading={isLoading}
         pagination={{
-          defaultPageSize: 10,
-          showSizeChanger: true,
-          pageSizeOptions: ["10", "20", "50"],
+          defaultPageSize: isMobile ? 5 : 10,
+          showSizeChanger: !isMobile,
+          pageSizeOptions: ["5", "10", "20", "50"],
+          size: isMobile ? "small" : "default",
         }}
       />
     </div>

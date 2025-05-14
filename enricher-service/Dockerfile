@@ -7,6 +7,6 @@ COPY enricher-service/package*.json ./
 RUN npm install
 
 COPY enricher-service/ ./
-COPY shared /app/shared
+COPY ../shared/ /app/shared/
 
 CMD ["node", "index.js"]
