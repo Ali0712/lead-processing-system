@@ -113,8 +113,6 @@ const LeadDetail = () => {
                 {leadData.phone || "N/A"}
               </Descriptions.Item>
 
-     
-
               <Descriptions.Item label="Source">{leadData.source}</Descriptions.Item>
 
               <Descriptions.Item label="Lead Score">
@@ -180,9 +178,39 @@ const LeadDetail = () => {
               ]}
             />
           </Card>
+        </Col>
+      </Row>
 
-          {leadData.geolocation && (
-            <Card title="Geolocation" style={{ marginBottom: 16 }}>
+      {/* New row for company and geolocation side by side */}
+      <Row gutter={[isMobile ? 8 : 16, isMobile ? 8 : 16]} style={{ marginTop: isMobile ? 8 : 16 }}>
+        {leadData.company && (
+          <Col xs={24} lg={12}>
+            <Card title="Company Information">
+              <Descriptions column={1} size={isMobile ? "small" : "default"}>
+                <Descriptions.Item label="Name">{leadData.company.name}</Descriptions.Item>
+                <Descriptions.Item label="Industry">{leadData.company.industry}</Descriptions.Item>
+                <Descriptions.Item label="Size">{leadData.company.size}</Descriptions.Item>
+                <Descriptions.Item label="Founded">{leadData.company.founded}</Descriptions.Item>
+                <Descriptions.Item label="Website">
+                  {leadData.company.website ? (
+                    <>
+                      <GlobalOutlined style={{ marginRight: 8 }} />
+                      <a href={leadData.company.website} target="_blank" rel="noopener noreferrer">
+                        {isMobile ? "Website Link" : leadData.company.website}
+                      </a>
+                    </>
+                  ) : (
+                    "N/A"
+                  )}
+                </Descriptions.Item>
+              </Descriptions>
+            </Card>
+          </Col>
+        )}
+
+        {leadData.geolocation && (
+          <Col xs={24} lg={12}>
+            <Card title="Geolocation">
               <Descriptions column={1} size={isMobile ? "small" : "default"}>
                 <Descriptions.Item label="Country">
                   <EnvironmentOutlined style={{ marginRight: 8 }} />
@@ -190,32 +218,13 @@ const LeadDetail = () => {
                 </Descriptions.Item>
                 <Descriptions.Item label="Region">{leadData.geolocation.region}</Descriptions.Item>
                 <Descriptions.Item label="City">{leadData.geolocation.city}</Descriptions.Item>
+                <Descriptions.Item label="Coordinates">
+                  {leadData.geolocation.latitude}, {leadData.geolocation.longitude}
+                </Descriptions.Item>
               </Descriptions>
             </Card>
-          )}
-
-          {leadData.company && (
-            <Card title="Company Information">
-              <Descriptions column={1} size={isMobile ? "small" : "default"}>
-                <Descriptions.Item label="Industry">{leadData.company.industry}</Descriptions.Item>
-                <Descriptions.Item label="Size">{leadData.company.size}</Descriptions.Item>
-                <Descriptions.Item label="Founded">{leadData.company.founded}</Descriptions.Item>
-                         <Descriptions.Item label="Website">
-                {leadData.company.website ? (
-                  <>
-                    <GlobalOutlined style={{ marginRight: 8 }} />
-                    <a href={leadData.company.website} target="_blank" rel="noopener noreferrer">
-                      {isMobile ? "Website Link" : leadData.company.website}
-                    </a>
-                  </>
-                ) : (
-                  "N/A"
-                )}
-              </Descriptions.Item>
-              </Descriptions>
-            </Card>
-          )}
-        </Col>
+          </Col>
+        )}
       </Row>
     </div>
   )
