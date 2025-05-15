@@ -24,18 +24,41 @@ exports.getLeadStats = async () => {
   const sevenDaysAgo = new Date()
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
 
-  const leadsByDayResult = await leadsCollection
-    .aggregate([
-      { $match: { createdAt: { $gte: sevenDaysAgo } } },
-      {
-        $group: {
-          _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
-          count: { $sum: 1 },
+  const leadsByDayResult = await leadsCollection.aggregate([
+    { 
+      $match: { 
+        createdAt: { 
+          $gte: sevenDaysAgo.toISOString() 
+        } 
+      } 
+    },
+    {
+      $addFields: {
+        createdAtDate: { 
+          $dateFromString: { 
+            dateString: "$createdAt",
+            // Adjust format to match your actual string format:
+            format: "%Y-%m-%dT%H:%M:%S.%LZ" // ISO format example
+            // format: "%m/%d/%Y %H:%M"     // US format example
+          } 
+        }
+      }
+    },
+    {
+      $group: {
+        _id: { 
+          $dateToString: { 
+            format: "%Y-%m-%d", 
+            date: "$createdAtDate",
+            timezone: "America/New_York" // Optional timezone
+          } 
         },
-      },
-      { $sort: { _id: 1 } },
-    ])
-    .toArray()
+        count: { $sum: 1 },
+      }
+    },
+    { $sort: { _id: 1 } },
+  ]).toArray();
+
 
   const leadsByDay = leadsByDayResult.map((item) => ({
     date: item._id,

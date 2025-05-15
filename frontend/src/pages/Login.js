@@ -75,10 +75,10 @@ const Login = () => {
             </Button>
           </Form.Item>
 
-          <div style={{ textAlign: "center" }}>
+          {/* <div style={{ textAlign: "center" }}>
             <Text>Don't have an account? </Text>
             <Link to="/signup">Sign up</Link>
-          </div>
+          </div> */}
 
           <div style={{ textAlign: "center", marginTop: 12 }}>
             <Link to="/public/submit">Submit a lead without logging in</Link>
