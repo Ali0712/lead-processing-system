@@ -99,24 +99,24 @@ services:
       - ./shared:/app/shared
       - /app/node_modules
 
-  frontend:
-    build:
-      context: .
-      dockerfile: ./frontend/Dockerfile
-    container_name: frontend
-    ports:
-      - "3001:3001"
-    environment:
-      - REACT_APP_API_URL=http://localhost:3000
-      - PORT=3001
-      - CHOKIDAR_USEPOLLING=true
-    depends_on:
-      - api-gateway
-    networks:
-      - lead-network
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
+  # frontend:
+  #   build:
+  #     context: .
+  #     dockerfile: ./frontend/Dockerfile
+  #   container_name: frontend
+  #   ports:
+  #     - "3001:3001"
+  #   environment:
+  #     - REACT_APP_API_URL=https://monthly-just-swift.ngrok-free.app
+  #     - PORT=3001
+  #     - CHOKIDAR_USEPOLLING=true
+  #   depends_on:
+  #     - api-gateway
+  #   networks:
+  #     - lead-network
+  #   volumes:
+  #     - ./frontend:/app
+  #     - /app/node_modules
 
 networks:
   lead-network:

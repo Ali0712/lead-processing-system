@@ -2,7 +2,7 @@ require("dotenv").config({path: "../.env"})
 const { parsePhoneNumberFromString } = require("libphonenumber-js")
 const { connectToRabbitMQ, consumeQueue } = require("./shared")
 
-const rabbitmqUrl = process.env.RABBITMQ_URL || "amqp://admin:admin@rabbitmq:5672"
+const rabbitmqUrl = "amqp://admin:admin@rabbitmq:5672"
 
 // Clean lead data
 function cleanLead(lead) {

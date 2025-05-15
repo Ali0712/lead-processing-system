@@ -1,6 +1,6 @@
 module.exports = {
   rabbitmq: {
-    url: process.env.RABBITMQ_URL || "amqp://admin:admin@rabbitmq:5672",
+    url: process.env.RABBITMQ_URL
   },
   mongodb: {
     uri:

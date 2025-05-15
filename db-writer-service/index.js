@@ -2,10 +2,8 @@ require("dotenv").config({ path: "../.env" })
 const { MongoClient } = require("mongodb")
 const { connectToRabbitMQ, consumeQueue } = require("./shared")
 
-const rabbitmqUrl = process.env.RABBITMQ_URL || "amqp://localhost:5672"
-const mongodbUri =
-  process.env.MONGODB_URI || "mongodb+srv://username:password@cluster.mongodb.net/leads?retryWrites=true&w=majority"
-
+const rabbitmqUrl = "amqp://admin:admin@rabbitmq:5672"
+const mongodbUri = process.env.MONGODB_URI
 // MongoDB connection
 let db
 let leadsCollection
@@ -80,7 +78,7 @@ async function start() {
     const { channel } = await connectToRabbitMQ(rabbitmqUrl, ["lead.storage"])
 
     // wait for 10 seconds before consuming the queue
-    await new Promise((resolve) => setTimeout(resolve, 10000))
+    // await new Promise((resolve) => setTimeout(resolve, 3000))
 
     if (channel) {
       await consumeQueue(channel, "lead.storage", processStorageMessage)

@@ -2,7 +2,7 @@ require("dotenv").config({ path: "../.env" })
 const validator = require("email-validator")
 const { connectToRabbitMQ, consumeQueue } = require("./shared")
 
-const rabbitmqUrl = process.env.RABBITMQ_URL || "amqp://localhost:5672"
+const rabbitmqUrl = "amqp://admin:admin@rabbitmq:5672"
 
 // Validate lead data
 function validateLead(lead) {
@@ -49,9 +49,6 @@ async function processValidationMessage(leadData, channel) {
 // Start the service
 async function start() {
   const { channel } = await connectToRabbitMQ(rabbitmqUrl, ["lead.validation", "lead.cleaning"])
-
-  // wait for 10 seconds before consuming the queue
-  await new Promise((resolve) => setTimeout(resolve, 10000))
 
   if (channel) {
     await consumeQueue(channel, "lead.validation", processValidationMessage)

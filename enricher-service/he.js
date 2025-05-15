@@ -2,7 +2,7 @@ const axios = require("axios")
 const NodeCache = require("node-cache")
 // const { connectToRabbitMQ, consumeQueue } = require("./shared")
 
-const rabbitmqUrl = process.env.RABBITMQ_URL || "amqp://localhost:5672"
+const rabbitmqUrl = process.env.RABBITMQ_URL
 
 // Simple cache to avoid repeated API calls
 const cache = new NodeCache({ stdTTL: 3600 }) // 1 hour TTL

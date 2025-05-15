@@ -3,7 +3,7 @@ const axios = require("axios")
 const NodeCache = require("node-cache")
 const { connectToRabbitMQ, consumeQueue } = require("./shared")
 
-const rabbitmqUrl = process.env.RABBITMQ_URL || "amqp://localhost:5672"
+const rabbitmqUrl = "amqp://admin:admin@rabbitmq:5672"
 const cache = new NodeCache({ stdTTL: 3600 }) // 1 hour TTL
 
 // ----------------- GET GEOLOCATION DATA -----------------
@@ -125,7 +125,7 @@ async function start() {
   const { channel } = await connectToRabbitMQ(rabbitmqUrl, ["lead.enrichment", "lead.storage"])
 
   // wait for 10 seconds before consuming the queue
-  await new Promise((resolve) => setTimeout(resolve, 10000))
+  // await new Promise((resolve) => setTimeout(resolve, 3000))
 
   if (channel) {
     await consumeQueue(channel, "lead.enrichment", processEnrichmentMessage)

@@ -42,7 +42,7 @@ const LeadDetail = () => {
       latitude: 37.7749,
       longitude: -122.4194,
     },
-    companyInfo: {
+    company: {
       name: "Acme Inc",
       industry: "Technology",
       size: "51-200 employees",
@@ -113,20 +113,7 @@ const LeadDetail = () => {
                 {leadData.phone || "N/A"}
               </Descriptions.Item>
 
-              <Descriptions.Item label="Company">{leadData.company || "N/A"}</Descriptions.Item>
-
-              <Descriptions.Item label="Website">
-                {leadData.website ? (
-                  <>
-                    <GlobalOutlined style={{ marginRight: 8 }} />
-                    <a href={leadData.website} target="_blank" rel="noopener noreferrer">
-                      {isMobile ? "Website Link" : leadData.website}
-                    </a>
-                  </>
-                ) : (
-                  "N/A"
-                )}
-              </Descriptions.Item>
+     
 
               <Descriptions.Item label="Source">{leadData.source}</Descriptions.Item>
 
@@ -207,12 +194,24 @@ const LeadDetail = () => {
             </Card>
           )}
 
-          {leadData.companyInfo && (
+          {leadData.company && (
             <Card title="Company Information">
               <Descriptions column={1} size={isMobile ? "small" : "default"}>
-                <Descriptions.Item label="Industry">{leadData.companyInfo.industry}</Descriptions.Item>
-                <Descriptions.Item label="Size">{leadData.companyInfo.size}</Descriptions.Item>
-                <Descriptions.Item label="Founded">{leadData.companyInfo.founded}</Descriptions.Item>
+                <Descriptions.Item label="Industry">{leadData.company.industry}</Descriptions.Item>
+                <Descriptions.Item label="Size">{leadData.company.size}</Descriptions.Item>
+                <Descriptions.Item label="Founded">{leadData.company.founded}</Descriptions.Item>
+                         <Descriptions.Item label="Website">
+                {leadData.company.website ? (
+                  <>
+                    <GlobalOutlined style={{ marginRight: 8 }} />
+                    <a href={leadData.company.website} target="_blank" rel="noopener noreferrer">
+                      {isMobile ? "Website Link" : leadData.company.website}
+                    </a>
+                  </>
+                ) : (
+                  "N/A"
+                )}
+              </Descriptions.Item>
               </Descriptions>
             </Card>
           )}

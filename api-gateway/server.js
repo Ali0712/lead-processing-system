@@ -69,13 +69,13 @@ const startServer = async () => {
     }
 
     // Connect to RabbitMQ
-    // const { channel } = await connectToRabbitMQ(config.rabbitmq.url, ["lead.validation"], (ch) => {
-    //   global.rabbitmqChannel = ch
-    // })
+    const { channel } = await connectToRabbitMQ(config.rabbitmq.url, ["lead.validation"], (ch) => {
+      global.rabbitmqChannel = ch
+    })
 
-    // if (channel) {
-    //   global.rabbitmqChannel = channel
-    // }
+    if (channel) {
+      global.rabbitmqChannel = channel
+    }
 
     // Start Express server
     app.listen(port, () => {
